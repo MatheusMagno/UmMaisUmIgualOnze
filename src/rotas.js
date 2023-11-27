@@ -1,8 +1,10 @@
 const express = require('express');
-const listarCategoria = require('./controladores/categorias');
-const { cadastrarUsuario } = require('./controladores/user');
+
 const schemaUsuario = require('./validacoes/schemaUsuario');
-const validarCorpoRequisicao = require('./middlewares/validarCorpoRequisicao');
+const validarCorpoRequisicao = require('./intermediario/validarCorpoRequisicao');
+
+const listarCategoria = require('./controladores/categorias');
+const { cadastrarUsuario } = require('./controladores/usuario');
 
 const rotas = express.Router();
 
