@@ -25,15 +25,30 @@ const cadastrarUsuario = async (req, res) => {
     }
 }
 
+const editarPerfilDoUsuarioLogado = async (req, res) => {
+    const { nome, email, senha } = req.body;
+    const senhaCripto = await bcrypt.hash(senha, 10);
+
+    try {
+
+        await knex(`usuarios`).update({nome: nome, email: email, senha: senhaCripto}).where({id:req.usuario});
+
+        return res.status(204).json();
+
+    } catch (error) {
+        res.status(500).json({ Mensagem: `Erro inesperdo do sistema.` });
+    }
+
+
+}
+
 const detalharPerfilUsuarioLogado = async (req, res) => {
 
     try {
         
-        const { rows } = await knex(`usuarios`).where(`id`, req.usuario);
+        const retornoConsulta = await knex(`usuarios`).where({id:req.usuario}).select('id', 'nome', 'email').first();
 
-        const {senha, ...usuarioSemSenha} = rows[0];
-
-        return res.status(200).json(usuarioSemSenha);
+        return res.status(200).json(retornoConsulta);
 
     } catch (error) {
         res.status(401).json({mensagem: `Para ter acesso a este recurso, é necessário estar logado`})
@@ -45,5 +60,6 @@ const detalharPerfilUsuarioLogado = async (req, res) => {
 
 module.exports = {
     cadastrarUsuario,
+    editarPerfilDoUsuarioLogado,
     detalharPerfilUsuarioLogado
 }
