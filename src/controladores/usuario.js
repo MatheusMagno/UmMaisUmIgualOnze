@@ -42,8 +42,8 @@ const detalharPerfilUsuarioLogado = async (req, res) => {
 }
 
 
-
 module.exports = {
     cadastrarUsuario,
     detalharPerfilUsuarioLogado
 }
+
