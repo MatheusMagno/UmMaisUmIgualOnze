@@ -25,6 +25,11 @@ const cadastrarUsuario = async (req, res) => {
     }
 }
 
+const detalharPerfilUsuarioLogado = async (req, res) => {
+    return res.status(200).json(req.usuario);
+}
+
 module.exports = {
-    cadastrarUsuario
+    cadastrarUsuario,
+    detalharPerfilUsuarioLogado
 }
