@@ -26,8 +26,22 @@ const cadastrarUsuario = async (req, res) => {
 }
 
 const detalharPerfilUsuarioLogado = async (req, res) => {
-    return res.status(200).json(req.usuario);
+
+    try {
+        
+        const { rows } = await knex(`usuarios`).where(`id`, req.usuario);
+
+        const {senha, ...usuarioSemSenha} = rows[0];
+
+        return res.status(200).json(usuarioSemSenha);
+
+    } catch (error) {
+        res.status(401).json({mensagem: `Para ter acesso a este recurso, é necessário estar logado`})
+    }
+
 }
+
+
 
 module.exports = {
     cadastrarUsuario,
