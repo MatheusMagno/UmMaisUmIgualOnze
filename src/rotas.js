@@ -17,7 +17,7 @@ rotas.post('/login', validarCorpoRequisicao(schemaLogin), login);
 rotas.use(verificaLogin)
 
 rotas.get('/usuario', detalharPerfilUsuarioLogado);
-rotas.put('/usuario',  editarPerfilDoUsuarioLogado)
+rotas.put('/usuario', editarPerfilDoUsuarioLogado);
 
 
 module.exports = rotas;
