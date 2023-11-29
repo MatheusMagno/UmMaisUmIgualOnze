@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 const login = async (req, res) => {
     const { email, senha } = req.body;
 
-
+try {
         const usuario = await knex('usuarios').where({ email }).first();
 
         if (!usuario) {
@@ -26,7 +26,9 @@ const login = async (req, res) => {
             usuario: dadosUsuario,
             token,
         })
-
+} catch (error) {
+        return res.status(400).json(error.message);
+    }
 }
 
 module.exports = {
