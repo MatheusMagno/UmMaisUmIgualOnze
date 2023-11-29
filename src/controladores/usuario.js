@@ -28,32 +28,32 @@ const cadastrarUsuario = async (req, res) => {
 const editarPerfilDoUsuarioLogado = async (req, res) => {
     const { nome, email, senha } = req.body;
     const senhaCripto = await bcrypt.hash(senha, 10);
-
     try {
+        if (email !== req.usuario.email) {
+            const emailUsuarioExiste = await knex('usuarios').where({ email }).first();
 
-        await knex(`usuarios`).update({nome: nome, email: email, senha: senhaCripto}).where({id:req.usuario});
+            if (emailUsuarioExiste) {
+                return res.status(404).json('O Email já existe.');
+            }
+        }
+
+        await knex(`usuarios`).update({ nome: nome, email: email, senha: senhaCripto }).where(req.usuario);
 
         return res.status(204).json();
 
     } catch (error) {
-        res.status(500).json({ Mensagem: `Erro inesperdo do sistema.` });
+        return res.status(400).json({ mensagem: error.menssage })
     }
-
-
 }
 
 const detalharPerfilUsuarioLogado = async (req, res) => {
-
     try {
-        
-        const retornoConsulta = await knex(`usuarios`).where({id:req.usuario}).select('id', 'nome', 'email').first();
+        const retornoConsulta = await knex(`usuarios`).where(req.usuario).select('id', 'nome', 'email').first();
 
         return res.status(200).json(retornoConsulta);
-
     } catch (error) {
-        res.status(401).json({mensagem: `Para ter acesso a este recurso, é necessário estar logado`})
+        return res.status(400).json({ mensagem: error.menssage })
     }
-
 }
 
 

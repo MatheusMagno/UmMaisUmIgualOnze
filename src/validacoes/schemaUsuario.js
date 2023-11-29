@@ -30,6 +30,8 @@ const schemaLogin = joi.object({
     })
 })
 
+
+
 module.exports = {
     schemaUsuario,
     schemaLogin
