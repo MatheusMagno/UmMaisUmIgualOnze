@@ -32,3 +32,10 @@ create table produtos (
   	categoria_id integer not null,
   	foreign key (categoria_id) references categorias(id)
 );
+
+create table clientes (
+	id serial primary key,
+  nome text not null,
+  email text not null unique,
+  cpf text not null unique
+);

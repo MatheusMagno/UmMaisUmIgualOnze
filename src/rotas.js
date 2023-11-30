@@ -9,6 +9,8 @@ const listarCategoria = require('./controladores/categorias');
 const { cadastrarUsuario, detalharPerfilUsuarioLogado, editarPerfilDoUsuarioLogado } = require('./controladores/usuario');
 const { login } = require('./controladores/login');
 const { cadastrarProduto, editarProduto, listarProdutos } = require('./controladores/produtos');
+const { cadastrarCliente } = require('./controladores/clientes');
+const { schemaCadastrarCliente } = require('./validacoes/schemaCliente');
 
 const rotas = express.Router();
 
@@ -25,5 +27,5 @@ rotas.post('/produto', validarCorpoRequisicao(schemaProduto), cadastrarProduto);
 rotas.put('/produto/:id', validarCorpoRequisicao(schemaProduto), editarProduto);
 rotas.get('/produto', listarProdutos);
 
-
+rotas.post('/cliente', validarCorpoRequisicao(schemaCadastrarCliente), cadastrarCliente);
 module.exports = rotas;
