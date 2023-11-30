@@ -23,3 +23,12 @@ values
 ('Moda'),
 ('Bebê'),
 ('Games');
+
+create table produtos (
+	id serial primary key,
+    descricao text not null,
+    quantidade_estoque integer not null,
+    valor integer not null,
+  	categoria_id integer not null,
+  	foreign key (categoria_id) references categorias(id)
+);
