@@ -8,7 +8,7 @@ const verificaLogin = require('./intermediario/verificaLogin');
 const listarCategoria = require('./controladores/categorias');
 const { cadastrarUsuario, detalharPerfilUsuarioLogado, editarPerfilDoUsuarioLogado } = require('./controladores/usuario');
 const { login } = require('./controladores/login');
-const { cadastrarProduto, editarProduto, listarProdutos } = require('./controladores/produtos');
+const { cadastrarProduto, editarProduto, listarProdutos, detalharProduto, excluirProduto} = require('./controladores/produtos');
 
 const rotas = express.Router();
 
@@ -24,6 +24,8 @@ rotas.put('/usuario', validarCorpoRequisicao(schemaUsuario), editarPerfilDoUsuar
 rotas.post('/produto', validarCorpoRequisicao(schemaProduto), cadastrarProduto);
 rotas.put('/produto/:id', validarCorpoRequisicao(schemaProduto), editarProduto);
 rotas.get('/produto', listarProdutos);
+rotas.get('/produto/:id', detalharProduto);
+rotas.delete('/produto/:id', excluirProduto);
 
 
 module.exports = rotas;
