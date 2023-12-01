@@ -5,7 +5,7 @@ const cadastrarCliente = async (req, res) => {
 
     const cpfFormatado = cpf.replace(/[\s.-]/g, '');
     try {
-        const clienteExiste = await knex(`clientes`).where({ email }, { cpfFormatado }).first();
+        const clienteExiste = await knex('clientes').where({ email }).orWhere({ cpf: cpfFormatado }).first();
 
         if (clienteExiste) {
             return res.status(400).json({ "mensagem": "Cliente já cadastrado com o email e cpf informados" });
