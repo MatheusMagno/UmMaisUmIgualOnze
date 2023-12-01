@@ -62,6 +62,25 @@ const listarProdutos = async (req, res) => {
     }
 };
 
+
+const detalharProduto = (req, res) => {
+
+    try {
+        
+    } catch (error) {
+        
+    }
+};
+
+const excluirProduto = (req, res) => {
+
+    try {
+        
+    } catch (error) {
+        
+    }
+};
+
 module.exports = {
     cadastrarProduto,
     editarProduto,
