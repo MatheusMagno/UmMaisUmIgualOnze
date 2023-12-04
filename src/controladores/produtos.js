@@ -1,19 +1,25 @@
 const knex = require('../conexao')
 
 const cadastrarProduto = async (req, res) => {
-    const { descricao, quantidade_estoque, valor, categoria_id } = req.body
+    const { descricao, quantidade_estoque, valor, categoria_id } = req.body;
+
     try {
-        const produto = await knex('produtos').insert({ descricao, quantidade_estoque, valor, categoria_id }).returning('*')
 
-        if (!produto[0]) {
-            return res.status(400).json('O produto não foi cadastrado')
+        const produtoExistente = await knex('produtos').where({ descricao }).first();
+
+        if (produtoExistente) {
+            const produtoAtualizado = await knex('produtos').where({ descricao }).update({ quantidade_estoque: produtoExistente.quantidade_estoque + quantidade_estoque, valor, categoria_id }).returning('*');
+
+            return res.status(200).json(produtoAtualizado[0]);
+        } else {
+            const novoProduto = await knex('produtos').insert({ descricao, quantidade_estoque, valor, categoria_id }).returning('*');
+
+            return res.status(200).json(novoProduto[0]);
         }
-
-        return res.status(200).json(produto[0])
     } catch (error) {
-        return res.status(400).json({ mensagem: error.menssage })
+        return res.status(400).json({ mensagem: error.message });
     }
-}
+};
 
 const editarProduto = async (req, res) => {
     const { id } = req.params
@@ -62,8 +68,46 @@ const listarProdutos = async (req, res) => {
     }
 };
 
+const detalharProduto = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const produtoId = await knex(`produtos`).where(`id`, id).first();
+
+        if (!produtoId) {
+            return res.status(400).json('O produto nao foi cadastrado')
+        }
+
+        return res.status(200).json(produtoId)
+
+    } catch (error) {
+        return res.status(500).json(error.message)
+    }
+};
+
+const excluirProduto = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const produtoId = await knex(`produtos`).where(`id`, id).first();
+
+        if (!produtoId) {
+            return res.status(400).json('O produto nao foi cadastrado')
+        }
+        if (produtoId) {
+            await knex(`produtos`).del().where(`id`, id)
+        }
+
+        return res.status(200).send()
+
+    } catch (error) {
+        return res.status(500).json(error.message)
+    }
+};
 module.exports = {
     cadastrarProduto,
     editarProduto,
     listarProdutos,
+    detalharProduto,
+    excluirProduto
 }
