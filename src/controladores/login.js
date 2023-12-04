@@ -1,3 +1,4 @@
+require('dotenv').config();
 const knex = require('../conexao');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -18,7 +19,7 @@ try {
             return res.status(400).json('Email e senha não confere');
         }
 
-        const token = jwt.sign({ id: usuario.id }, process.env.SENHA_JWT, { expiresIn: '1h' });;
+        const token = jwt.sign({ id: usuario.id }, process.env.SENHA_JWT, { expiresIn: '8h' });;
 
         const { senha: _, ...dadosUsuario } = usuario;
 
