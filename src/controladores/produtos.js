@@ -1,19 +1,25 @@
 const knex = require('../conexao')
 
 const cadastrarProduto = async (req, res) => {
-    const { descricao, quantidade_estoque, valor, categoria_id } = req.body
+    const { descricao, quantidade_estoque, valor, categoria_id } = req.body;
+
     try {
-        const produto = await knex('produtos').insert({ descricao, quantidade_estoque, valor, categoria_id }).returning('*')
 
-        if (!produto[0]) {
-            return res.status(400).json('O produto não foi cadastrado')
+        const produtoExistente = await knex('produtos').where({ descricao }).first();
+
+        if (produtoExistente) {
+            const produtoAtualizado = await knex('produtos').where({ descricao }).update({ quantidade_estoque: produtoExistente.quantidade_estoque + quantidade_estoque, valor, categoria_id }).returning('*');
+
+            return res.status(200).json(produtoAtualizado[0]);
+        } else {
+            const novoProduto = await knex('produtos').insert({ descricao, quantidade_estoque, valor, categoria_id }).returning('*');
+
+            return res.status(200).json(novoProduto[0]);
         }
-
-        return res.status(200).json(produto[0])
     } catch (error) {
-        return res.status(400).json({ mensagem: error.menssage })
+        return res.status(400).json({ mensagem: error.message });
     }
-}
+};
 
 const editarProduto = async (req, res) => {
     const { id } = req.params
