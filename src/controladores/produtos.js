@@ -57,6 +57,13 @@ const listarProdutos = async (req, res) => {
         let query = knex('produtos');
 
         if (categoria_id) {
+
+            const categoriaExiste = await knex('categorias').where('id', categoria_id).first();
+
+            if (!categoriaExiste) {
+                return res.status(404).json({ mensagem: 'Categoria não encontrada' });
+            }
+
             query = query.where('categoria_id', categoria_id);
         }
 
@@ -64,7 +71,7 @@ const listarProdutos = async (req, res) => {
 
         return res.status(200).json(produtos);
     } catch (error) {
-        return res.status(500).json(error.message)
+        return res.status(500).json({ mensagem: 'Erro ao listar produtos', error: error.message });
     }
 };
 
