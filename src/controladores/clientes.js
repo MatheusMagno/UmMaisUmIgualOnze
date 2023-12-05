@@ -29,7 +29,47 @@ const listarClientes = async (req, res) => {
     }
 }
 
+const detalharCliente = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const cliente = await knex('clientes').where({ id }).first();
+        if (!cliente) {
+            return res.status(404).json({ mensagem: 'Cliente não encontrado' });
+        }
+        return res.status(200).json(cliente);
+    } catch (error) {
+        return res.status(500).json({ mensagem: 'Erro inesperado do sistema.' });
+    }
+};
+
+const editarDadosDoCliente = async (req, res) => {
+    const { id } = req.params;
+    const { nome, email, cpf } = req.body;
+    try {
+        const clienteExistente = await knex('clientes').where({ id }).first();
+        if (!clienteExistente) {
+            return res.status(404).json({ mensagem: 'Cliente não encontrado' });
+        }
+        if (!nome || !email || !cpf) {
+            return res.status(400).json({ mensagem: 'Todos os campos são obrigatórios: nome, email, cpf' });
+        }
+        const emailExistente = await knex('clientes').where({ email }).whereNot({ id }).first();
+        if (emailExistente) {
+            return res.status(400).json({ mensagem: 'E-mail já está em uso por outro cliente' });
+        }
+        const cpfExistente = await knex('clientes').where({ cpf }).whereNot({ id }).first();
+        if (cpfExistente) {
+            return res.status(400).json({ mensagem: 'CPF já está em uso por outro cliente' });
+        }
+        await knex('clientes').update({ nome, email, cpf }).where({ id });
+        return res.status(204).json();
+    } catch (error) {
+        return res.status(500).json({ mensagem: 'Erro inesperado do sistema.' });
+    }
+};
 module.exports = {
     cadastrarCliente,
-    listarClientes
+    listarClientes,
+    editarDadosDoCliente,
+    detalharCliente
 }
