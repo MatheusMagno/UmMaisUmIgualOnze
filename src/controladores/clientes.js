@@ -11,7 +11,7 @@ const cadastrarCliente = async (req, res) => {
             return res.status(400).json({ "mensagem": "Cliente já cadastrado com o email e cpf informados" });
         }
 
-        const cliente = await knex('clientes').insert({ nome, email, cpf: cpfFormatado }).returning('*')
+        const cliente = await knex('clientes').insert({ nome, email, cpf: cpfFormatado }).returning(['id', 'nome', 'email', 'cpf'])
 
         return res.status(201).json(cliente[0])
     } catch (error) {
