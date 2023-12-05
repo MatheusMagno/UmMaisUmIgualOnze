@@ -23,12 +23,7 @@ const listarClientes = async (req, res) => {
     try {
         const listaDeClientes = await knex('clientes');
 
-        return res.status(200).json({
-            id: listaDeClientes.id,
-            nome: listaDeClientes.nome,
-            email: listaDeClientes.email,
-            cpf: listaDeClientes.cpf
-        });
+        return res.status(200).json(listaDeClientes);
     } catch (error) {
         return res.status(400).json(error.message);
     }
