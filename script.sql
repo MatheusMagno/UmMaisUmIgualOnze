@@ -38,9 +38,9 @@ create table clientes (
   nome text not null,
   email text not null unique,
   cpf text not null unique,
-  cep int,
+  cep text,
   rua text,
-  numero int,
+  numero text,
   bairro text,
   cidade text,
   estado text
