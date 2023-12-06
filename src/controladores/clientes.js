@@ -47,25 +47,25 @@ const detalharCliente = async (req, res) => {
 const editarDadosDoCliente = async (req, res) => {
     const { id } = req.params;
     const { nome, email, cpf, cep, rua, numero, bairro, cidade, estado } = req.body;
-    try {
-        const clienteExistente = await knex('clientes').where({ id }).first();
-        if (!clienteExistente) {
-            return res.status(404).json({ mensagem: 'Cliente não encontrado' });
-        }
 
-        const emailExistente = await knex('clientes').where({ email }).whereNot({ id }).first();
-        if (emailExistente) {
-            return res.status(400).json({ mensagem: 'E-mail já está em uso por outro cliente' });
-        }
-        const cpfExistente = await knex('clientes').where({ cpf }).whereNot({ id }).first();
-        if (cpfExistente) {
-            return res.status(400).json({ mensagem: 'CPF já está em uso por outro cliente' });
-        }
-        await knex('clientes').update({ nome, email, cpf, cep, rua, numero, bairro, cidade, estado }).where({ id });
-        return res.status(204).json();
-    } catch (error) {
-        return res.status(500).json({ mensagem: 'Erro inesperado do sistema.' });
+    const clienteExistente = await knex('clientes').where({ id }).first();
+    if (!clienteExistente) {
+        return res.status(404).json({ mensagem: 'Cliente não encontrado' });
     }
+
+    const emailExistente = await knex('clientes').where({ email }).whereNot({ id }).first();
+    if (emailExistente) {
+        return res.status(400).json({ mensagem: 'E-mail já está em uso por outro cliente' });
+    }
+    const cpfExistente = await knex('clientes').where({ cpf }).whereNot({ id }).first();
+    if (cpfExistente) {
+        return res.status(400).json({ mensagem: 'CPF já está em uso por outro cliente' });
+    }
+
+    await knex('clientes').update({ nome, email, cpf, cep, rua, numero, bairro, cidade, estado }).where({ id });
+
+    return res.status(204).json();
+
 };
 module.exports = {
     cadastrarCliente,
