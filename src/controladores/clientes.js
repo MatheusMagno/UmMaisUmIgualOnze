@@ -1,7 +1,7 @@
 const knex = require('../conexao');
 
 const cadastrarCliente = async (req, res) => {
-    const { nome, email, cpf } = req.body;
+    const { nome, email, cpf, cep, rua, numero, bairro, cidade, estado } = req.body;
 
     const cpfFormatado = cpf.replace(/[\s.-]/g, '');
     try {
@@ -11,7 +11,7 @@ const cadastrarCliente = async (req, res) => {
             return res.status(400).json({ "mensagem": "Cliente já cadastrado com o email e cpf informados" });
         }
 
-        const cliente = await knex('clientes').insert({ nome, email, cpf: cpfFormatado }).returning(['id', 'nome', 'email', 'cpf'])
+        const cliente = await knex('clientes').insert({ nome, email, cpf: cpfFormatado, cep, rua, numero, bairro, cidade, estado }).returning('*')
 
         return res.status(201).json(cliente[0])
     } catch (error) {
