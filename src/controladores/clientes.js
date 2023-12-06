@@ -36,7 +36,13 @@ const detalharCliente = async (req, res) => {
         if (!cliente) {
             return res.status(404).json({ mensagem: 'Cliente não encontrado' });
         }
-        return res.status(200).json(cliente);
+
+        return res.status(200).json({
+            id: cliente.id,
+            nome: cliente.nome,
+            email: cliente.email,
+            cpf: cliente.cpf
+        });
     } catch (error) {
         return res.status(500).json({ mensagem: 'Erro inesperado do sistema.' });
     }

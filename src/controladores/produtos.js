@@ -80,12 +80,12 @@ const detalharProduto = async (req, res) => {
     const { id } = req.params;
 
     try {
-        const produtoId = await knex(`produtos`).where(`id`,id).first();
+        const produtoId = await knex(`produtos`).where(`id`, id).first();
 
-        if(!produtoId){
+        if (!produtoId) {
             return res.status(400).json('O produto nao foi cadastrado')
         }
-        
+
         return res.status(200).json(produtoId)
 
     } catch (error) {
@@ -94,18 +94,18 @@ const detalharProduto = async (req, res) => {
 };
 
 const excluirProduto = async (req, res) => {
-    const {id} = req.params;
+    const { id } = req.params;
 
     try {
         const produtoId = await knex(`produtos`).where(`id`, id).first();
 
-        if(!produtoId){
+        if (!produtoId) {
             return res.status(400).json('O produto nao foi cadastrado')
         }
-        if(produtoId){
-            await knex(`produtos`).del().where(`id`,id)
+        if (produtoId) {
+            await knex(`produtos`).del().where(`id`, id)
         }
-        
+
         return res.status(200).send()
 
     } catch (error) {
