@@ -14,7 +14,13 @@ const schemaCadastrarCliente = joi.object({
         'any.required': 'O campo CPF é obrigatório',
         'string.empty': 'O campo CPF é obrigatório',
         'string.min': 'O CPF precisa conter no minimo 11 caracteres'
-    })
+    }),
+    cep: joi.string().max(9).required(),
+    rua: joi.string().required(),
+    numero: joi.string().required(),
+    bairro: joi.string().required(),
+    cidade: joi.string().required(),
+    estado: joi.string().required()
 });
 
 module.exports = {
