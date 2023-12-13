@@ -64,13 +64,15 @@ const listarPedido = async (req, res) => {
             query.where('cliente_id', cliente_id);
         }
 
-        const pedidos = await query.select('*');
+        const pedidos = await query.select('id', 'valor_total', "observacao", "cliente_id");
 
-        const pedidosComProdutos = await Promise.all(pedidos.map(async (pedido) => {
-            const produtosDoPedido = await knex('pedido_produtos').where('pedido_id', pedido.id).select('*');
+        const pedidosComProdutos = [];
 
-            return { pedido, pedido_produtos: produtosDoPedido };
-        }));
+        for (const pedido of pedidos) {
+            const produtosDoPedido = await knex('pedido_produtos').where('pedido_id', pedido.id).select("id", "quantidade_produto", "valor_produto", "pedido_id", "produto_id");
+            pedidosComProdutos.push({ pedido, pedido_produtos: produtosDoPedido });
+        }
+
 
         return res.status(200).json(pedidosComProdutos);
     } catch (error) {
