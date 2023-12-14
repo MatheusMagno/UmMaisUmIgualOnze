@@ -62,5 +62,7 @@ create table pedido_produtos (
   produto_id integer not null,
   quantidade_produto integer not null,
   valor_produto integer not null,
+  foreign key (pedido_id) references pedidos(id),
+  foreign key (produto_id) references produtos(id)
 );
 
