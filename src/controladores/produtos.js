@@ -103,7 +103,14 @@ const excluirProduto = async (req, res) => {
             return res.status(400).json('O produto nao foi cadastrado')
         }
         if (produtoId) {
-            await knex(`produtos`).del().where(`id`, id)
+
+            const localizarProdutoPedido = await knex(`pedidos_produtos`).where(`produto_id`, id).first();
+
+            if (localizarProdutoPedido) {
+                return res.status(400).json('O produto não pode ser excluido, pois está vinculado a um pedido')
+            }else{
+                await knex(`produtos`).del().where(`id`, id)
+            }
         }
 
         return res.status(200).send()
@@ -112,6 +119,7 @@ const excluirProduto = async (req, res) => {
         return res.status(500).json(error.message)
     }
 };
+
 
 module.exports = {
     cadastrarProduto,
