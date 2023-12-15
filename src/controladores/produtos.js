@@ -104,11 +104,11 @@ const excluirProduto = async (req, res) => {
         }
         if (produtoId) {
 
-            const localizarProdutoPedido = await knex(`pedidos_produtos`).where(`produto_id`, id).first();
+            const localizarProdutoPedido = await knex(`pedido_produtos`).where(`produto_id`, id).first();
 
             if (localizarProdutoPedido) {
                 return res.status(400).json('O produto não pode ser excluido, pois está vinculado a um pedido')
-            }else{
+            } else {
                 await knex(`produtos`).del().where(`id`, id)
             }
         }

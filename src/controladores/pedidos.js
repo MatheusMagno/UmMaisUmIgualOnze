@@ -1,7 +1,7 @@
 const knex = require('../conexao');
 const { enviarEmail } = require('../servicos/nodemailer');
 
-const cadasTrarPedido = async (req, res) => {
+const cadastrarPedido = async (req, res) => {
     const { cliente_id, observacao, pedido_produtos } = req.body;
 
     const produtosIds = pedido_produtos.map(produto => produto.produto_id);
@@ -74,6 +74,39 @@ const cadasTrarPedido = async (req, res) => {
     }
 }
 
+
+const listarPedido = async (req, res) => {
+    try {
+        const { cliente_id } = req.query;
+
+        let query = knex('pedidos');
+
+        if (cliente_id) {
+            const clienteExiste = await knex('clientes').where('id', cliente_id).first();
+
+            if (!clienteExiste) {
+                return res.status(404).json({ mensagem: 'Cliente não encontrado' });
+            }
+
+            query.where('cliente_id', cliente_id);
+        }
+
+        const pedidos = await query.select('id', 'valor_total', "observacao", "cliente_id");
+
+        const pedidosComProdutos = [];
+
+        for (const pedido of pedidos) {
+            const produtosDoPedido = await knex('pedido_produtos').where('pedido_id', pedido.id).select("id", "quantidade_produto", "valor_produto", "pedido_id", "produto_id");
+            await pedidosComProdutos.push({ pedido, pedido_produtos: produtosDoPedido });
+        }
+
+        return res.status(200).json(pedidosComProdutos);
+    } catch (error) {
+        return res.status(400).json(error.message);
+    }
+};
+
 module.exports = {
-    cadasTrarPedido
+    cadastrarPedido,
+    listarPedido
 }
