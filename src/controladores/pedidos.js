@@ -1,7 +1,7 @@
 const knex = require('../conexao');
 const { enviarEmail } = require('../servicos/nodemailer');
 
-const cadasTrarPedido = async (req, res) => {
+const cadastrarPedido = async (req, res) => {
     const { cliente_id, observacao, pedido_produtos } = req.body;
 
     const produtosIds = pedido_produtos.map(produto => produto.produto_id);
@@ -97,7 +97,7 @@ const listarPedido = async (req, res) => {
 
         for (const pedido of pedidos) {
             const produtosDoPedido = await knex('pedido_produtos').where('pedido_id', pedido.id).select("id", "quantidade_produto", "valor_produto", "pedido_id", "produto_id");
-            pedidosComProdutos.push({ pedido, pedido_produtos: produtosDoPedido });
+            await pedidosComProdutos.push({ pedido, pedido_produtos: produtosDoPedido });
         }
 
         return res.status(200).json(pedidosComProdutos);
