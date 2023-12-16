@@ -1,10 +1,20 @@
-const knex = require('../conexao')
+const knex = require('../conexao');
+const { uploadImagem, excluirImagem } = require('../servicos/uploads');
 
 const cadastrarProduto = async (req, res) => {
     const { descricao, quantidade_estoque, valor, categoria_id } = req.body;
-    const {originalname, mimetype , buffer} = req.file
-
+    const imagem = req.file
+    
     try {
+        let produto_imagem
+
+        if(imagem){
+            produto_imagem = await uploadImagem(
+                `produtos/${imagem.originalname}`,
+                imagem.buffer,
+                imagem.mimetype,
+            );
+        }
 
         const produtoExistente = await knex('produtos').where({ descricao }).first();
 
@@ -13,20 +23,8 @@ const cadastrarProduto = async (req, res) => {
 
             return res.status(200).json(produtoAtualizado[0]);
         } else {
-            const novoProduto = await knex('produtos').insert({ descricao, quantidade_estoque, valor, categoria_id }).returning('*');
+            const novoProduto = await knex('produtos').insert({ descricao, quantidade_estoque, valor, categoria_id, produto_imagem }).returning('*');
             const id = produto[0].id
-
-            const imagem = await uploadImagem(
-                `produtos/${id}/${originalname}`,
-                buffer,
-                mimetype
-            )
-    
-            produto = await knex('produtos').update({
-                imagem: imagem.path
-            }).where({ id }).returning('*')
-    
-            produto[0].urlImagem = imagem.url
 
             return res.status(200).json(novoProduto[0]);
         }
@@ -35,44 +33,57 @@ const cadastrarProduto = async (req, res) => {
     }
 };
 
-const atualizarImagemProduto = async (req, res) => {
-    const { originalname, mimetype, buffer } = req.file
-    const { id } = req.params;
+const editarProduto = async (req, res) => {
+    const { id } = req.params
+    const produto = req.produto
+    const { descricao, quantidade_estoque, valor, categoria_id } = req.body
+    const imagem = req.file;
+
+  
 
     try {
-        const produtoEncontrado = await knex('produtos').where({
-            id,
-            usuario_id: req.usuario.id
-        }).first();
+        let produto_imagem = produto.produto_imagem
 
-        if (!produtoEncontrado) {
-            return res.status(404).json('Produto não encontrado');
+        if(imagem){
+            if(produto.produto_imagem){
+                const path = produto.produto_imagem.replace(
+                    `${process.env.URL_ENDPOINT}/${process.env.BLACKBLAZE_BUCKET}/`,
+                    '',
+                )
+                await excluirImagem(decodeURIComponent(path))
+            }     
+            produto_imagem = await uploadImagem(
+                `produtos/${imagem.originalname}`,
+                imagem.buffer,
+                imagem.mimetype,
+                )
         }
 
-        await excluirImagem(produtoEncontrado.imagem)
-
-        const upload = await uploadImagem(
-            `produtos/${produtoEncontrado.id}/${originalname}`,
-            buffer,
-            mimetype
-        )
-
-        const produto = await knex('produtos')
-            .where({ id })
-            .update({
-                imagem: upload.path
-            });
+        const produto = await knex('produtos').where({ id }).first()
 
         if (!produto) {
-            return res.status(400).json("O produto não foi atualizado");
+            return res.status(404).json('Produto não encontrado')
         }
 
-        return res.status(204).send()
+        const categoriaExistente = await knex('categorias').where({ id: categoria_id }).first();
+
+        if (!categoriaExistente) {
+            return res.status(400).json({ mensagem: 'A categoria informada não existe.' });
+        }
+
+        const produtoAtualizado = await knex('produtos').where({ id }).update({ descricao, quantidade_estoque, valor, categoria_id, produto_imagem})
+
+        if (!produtoAtualizado) {
+            return res.status(400).json('O produto não foi atualizado')
+        }
+
+        return res.status(200).json('produto foi atualizado com sucesso.')
     } catch (error) {
-        return res.status(400).json(error.message);
+        return res.status(400).json(error.message)
     }
 }
+
 module.exports = {
     cadastrarProduto,
-    atualizarImagemProduto,
+    editarProduto,
     }

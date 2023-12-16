@@ -14,6 +14,6 @@ rotas.get('/usuario', detalharPerfilUsuarioLogado);
 rotas.put('/usuario', editarPerfilDoUsuarioLogado);
 
 rotas.post('/produto', validarCorpoRequisicao(schemaProduto), multer.single('imagem'), cadastrarProduto);
-rotas.patch('/produtos/:id/imagem', multer.single('imagem'),  atualizarImagemProduto);
+rotas.put('/produto/:id', validarCorpoRequisicao(schemaProduto), multer.single('imagem'),editarProduto);
 
 module.exports = rotas;
