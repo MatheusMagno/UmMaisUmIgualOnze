@@ -1,4 +1,6 @@
 const express = require('express');
+const multer = require('./servicos/multer')
+const {cadastrarProduto, atualizarImagemProduto} = require('./controladores/produtos');
 
 const rotas = express.Router();
 
@@ -11,5 +13,7 @@ rotas.post('/login', login);
 rotas.get('/usuario', detalharPerfilUsuarioLogado);
 rotas.put('/usuario', editarPerfilDoUsuarioLogado);
 
+rotas.post('/produto', validarCorpoRequisicao(schemaProduto), multer.single('imagem'), cadastrarProduto);
+rotas.patch('/produtos/:id/imagem', multer.single('imagem'),  atualizarImagemProduto);
 
 module.exports = rotas;
