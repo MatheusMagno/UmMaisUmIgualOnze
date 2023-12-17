@@ -5,7 +5,7 @@ const cadastrarProduto = async (req, res) => {
     const { descricao, quantidade_estoque, valor, categoria_id } = req.body;
     const imagem = req.file
     const quantidade_estoque_numerico = parseInt(quantidade_estoque, 10);
-
+    try {
     let produto_imagem
 
     if (imagem) {
@@ -27,14 +27,16 @@ const cadastrarProduto = async (req, res) => {
 
         return res.status(200).json(novoProduto[0]);
     }
-
+} catch (error) {
+        return res.status(500).json({ mensagem: 'Erro ao listar produtos', error: error.message });
+}
 };
 
 const editarProduto = async (req, res) => {
     const { id } = req.params
     const { descricao, quantidade_estoque, valor, categoria_id } = req.body
     const imagem = req.file;
-
+    try {
     const produto = await knex('produtos').where({ id }).first()
     let produto_imagem = produto.produto_imagem
 
@@ -70,6 +72,9 @@ const editarProduto = async (req, res) => {
     }
 
     return res.status(200).json(produtoAtualizado[0]);
+    } catch (error) {
+        return res.status(500).json({ mensagem: 'Erro ao listar produtos', error: error.message });
+    }
 }
 
 const listarProdutos = async (req, res) => {
