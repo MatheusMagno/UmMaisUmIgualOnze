@@ -22,6 +22,7 @@ const schemaProduto = joi.object({
         'number.positive': 'A categoria_id deve ser um número positivo',
         'any.required': 'O campo categoria_id é obrigatório',
     }),
+    produto_imagem: joi.string().allow(''),
 });
 
 module.exports = {
